@@ -2,21 +2,114 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사진관 예약</title>
+    <style>
+        /* 전체 배경 및 폰트 설정 */
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: #f7f5f2; /* 따뜻한 아이보리/베이지 톤 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        /* 예약 카드 디자인 */
+        .reservation-card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 360px;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 부드러운 그림자 */
+            text-align: center;
+        }
+
+        /* 로고 디자인 */
+        .logo {
+            max-width: 140px; /* 로고 크기 조절 */
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 22px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        /* 입력 폼 디자인 */
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #333; /* 클릭 시 테두리 색상 진하게 */
+        }
+
+        /* 버튼 디자인 */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #2c2c2c; /* 차분하고 짙은 회색 */
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #555555; /* 마우스 올렸을 때 색상 변경 */
+        }
+    </style>
 </head>
 <body>
 
-    <h2>사진관 주말 예약</h2>
-    
-    <label for="datePicker">예약 날짜 선택 (주말만 가능):</label>
-    <input type="date" id="datePicker">
-    <br><br>
-    
-    <label for="customerName">예약자 성함:</label>
-    <input type="text" id="customerName" placeholder="홍길동">
-    <br><br>
+    <div class="reservation-card">
+        <img src="logo.png" alt="사진관 로고" class="logo">
+        
+        <h2>주말 예약하기</h2>
+        
+        <div class="input-group">
+            <label for="datePicker">예약 날짜 (주말만 가능)</label>
+            <input type="date" id="datePicker">
+        </div>
+        
+        <div class="input-group">
+            <label for="customerName">예약자 성함</label>
+            <input type="text" id="customerName" placeholder="이름을 입력해주세요">
+        </div>
 
-    <button onclick="submitReservation()">사진관 예약하기</button>
+        <button onclick="submitReservation()">예약하기</button>
+    </div>
 
     <script>
         function submitReservation() {
@@ -31,19 +124,18 @@
             const selectedDate = new Date(dateInput);
             const dayOfWeek = selectedDate.getDay(); 
 
-            // 1. 주말 제한 로직
+            // 주말 제한 로직
             if (dayOfWeek !== 0 && dayOfWeek !== 6) {
                 alert("예약은 주말(토요일, 일요일)에만 가능합니다. 다른 날짜를 선택해주세요.");
                 return;
             }
 
-            // 2. Vercel 서버로 데이터 전송
+            // Vercel 서버로 데이터 전송
             sendToServer(dateInput, nameInput);
         }
 
         async function sendToServer(date, name) {
             try {
-                // 우리의 안전한 서버(api/reserve.js)로 데이터를 보냅니다.
                 const response = await fetch('/api/reserve', {
                     method: 'POST',
                     headers: {
