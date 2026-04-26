@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     const targetUserId = process.env.DISCORD_USER_ID;
 
     const message = {
-        content: `<@${targetUserId}> 님! 새로운 주말 예약이 접수되었습니다. 🎉\n**예약자:** ${name}\n**예약일:** ${date}`
+        content: `<@${targetUserId}> 님! 새로운 예약이 접수되었습니다. 🎉\n**예약자:** ${name}\n**예약일:** ${date}\n**디코:** ${discord}`
     };
 
     try {

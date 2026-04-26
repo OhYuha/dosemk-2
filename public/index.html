@@ -8,7 +8,7 @@
         /* 전체 배경 및 폰트 설정 */
         body {
             font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-            background-color: #f7f5f2; /* 따뜻한 아이보리/베이지 톤 */
+            background-color: #f7f5f2; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,13 +24,13 @@
             max-width: 360px;
             padding: 40px 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 부드러운 그림자 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
             text-align: center;
         }
 
         /* 로고 디자인 */
         .logo {
-            max-width: 140px; /* 로고 크기 조절 */
+            max-width: 140px; 
             height: auto;
             margin-bottom: 20px;
         }
@@ -68,14 +68,14 @@
         }
 
         .input-group input:focus {
-            border-color: #333; /* 클릭 시 테두리 색상 진하게 */
+            border-color: #333; 
         }
 
         /* 버튼 디자인 */
         button {
             width: 100%;
             padding: 14px;
-            background-color: #2c2c2c; /* 차분하고 짙은 회색 */
+            background-color: #2c2c2c; 
             color: #ffffff;
             border: none;
             border-radius: 8px;
@@ -87,7 +87,7 @@
         }
 
         button:hover {
-            background-color: #555555; /* 마우스 올렸을 때 색상 변경 */
+            background-color: #555555; 
         }
     </style>
 </head>
@@ -100,52 +100,64 @@
         
         <div class="input-group">
             <label for="datePicker">예약 날짜 (주말만 가능)</label>
-            <input type="date" id="datePicker">
+            <input type="date" id="datePicker" onchange="checkWeekend(this)">
         </div>
         
         <div class="input-group">
-            <label for="customerName">예약자 성함</label>
-            <input type="text" id="customerName" placeholder="이름을 입력해주세요">
+            <label for="customerName">예약자 인게임 닉네임</label>
+            <input type="text" id="customerName" placeholder="닉네임을 입력해주세요">
         </div>
 
+        <div class="input-group">
+            <label for="DiscordName">예약자 디스코드 아이디</label>
+            <input type="text" id="DiscordName" placeholder="아이디를 입력해주세요">
+        </div>
         <button onclick="submitReservation()">예약하기</button>
     </div>
 
     <script>
+        // 💡 새롭게 추가된 기능: 날짜를 선택하자마자 주말인지 검사하는 함수
+        function checkWeekend(inputElement) {
+            const selectedValue = inputElement.value;
+            if (!selectedValue) return; // 아무것도 선택 안 했으면 무시
+
+            const selectedDate = new Date(selectedValue);
+            const dayOfWeek = selectedDate.getDay(); // 0: 일요일, 6: 토요일
+
+            // 평일(월~금)을 선택했다면?
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                alert("평일은 예약할 수 없습니다. 주말(토, 일)을 선택해주세요!");
+                inputElement.value = ''; // 👈 입력창을 강제로 비워버립니다 (선택 취소)
+            }
+        }
+
         function submitReservation() {
             const dateInput = document.getElementById('datePicker').value;
             const nameInput = document.getElementById('customerName').value;
+            const DiscordInput = document.getElementById('DiscordName').value;
 
-            if (!dateInput || !nameInput) {
-                alert("날짜와 성함을 모두 입력해주세요.");
-                return;
-            }
-
-            const selectedDate = new Date(dateInput);
-            const dayOfWeek = selectedDate.getDay(); 
-
-            // 주말 제한 로직
-            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-                alert("예약은 주말(토요일, 일요일)에만 가능합니다. 다른 날짜를 선택해주세요.");
+            // 빈칸 검사
+            if (!dateInput || !nameInput || !DiscordInput) {
+                alert("날짜와 닉네임, 디코 아이디를 모두 입력해주세요.");
                 return;
             }
 
             // Vercel 서버로 데이터 전송
-            sendToServer(dateInput, nameInput);
+            sendToServer(dateInput, nameInput, DiscordInput);
         }
 
-        async function sendToServer(date, name) {
+        async function sendToServer(date, name, discord) {
             try {
                 const response = await fetch('/api/reserve', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ date: date, name: name })
+                    body: JSON.stringify({ date: date, name: name, discord:discord})
                 });
 
                 if (response.ok) {
-                    alert("예약이 성공적으로 완료되었습니다!");
+                    alert("예약이 성공적으로 완료되었습니다! 담당자가 빠르게 DM으로 안내드리겠습니다!");
                 } else {
                     alert("예약 처리 중 오류가 발생했습니다.");
                 }
