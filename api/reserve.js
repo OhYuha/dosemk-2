@@ -4,14 +4,14 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: '허용되지 않은 요청 방식입니다.' });
     }
 
-    const { date, name } = req.body;
+    const { date, name, discord, sever } = req.body;
 
     // Vercel 설정에서 입력해둘 환경 변수(비밀번호 같은 역할)를 불러옵니다.
     const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
     const targetUserId = process.env.DISCORD_USER_ID;
 
     const message = {
-        content: `<@${targetUserId}> 님! 새로운 예약이 접수되었습니다. 🎉\n**예약자:** ${name}\n**예약일:** ${date}\n**디코:** ${discord}`
+        content: `<@${targetUserId}> 님! 새로운 예약이 접수되었습니다. 🎉\n**예약자:** ${name}\n**예약일:** ${date}\n**디코:** ${discord}\n**서버**${sever}`
     };
 
     try {
