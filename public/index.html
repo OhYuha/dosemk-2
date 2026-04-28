@@ -107,6 +107,15 @@
                 <option value="피버온라인">피버온라인</option>
             </select>
         </div>
+        <div class="input-group2">
+            <label for="shootType">원하시는 촬영 종류</label>
+            <select id="shootType">
+                <option value="" disabled selected>촬영을 원하시는 항목을 선택해주세요</option>
+                <option value="증명/여권사진">증명/여권사진</option>
+                <option value="개인 프로필">개인 프로필</option>
+                <option value="가족/우정사진">가족/우정사진</option>
+            </select>
+        </div>
         <div class="input-group">
             <label for="datePicker">예약 날짜 (주말만 가능)</label>
             <input type="date" id="datePicker" onchange="checkWeekend(this)">
@@ -123,15 +132,7 @@
         </div>
         <button onclick="submitReservation()">예약하기</button>
     </div>
-<div class="input-group">
-            <label for="shootType">원하시는 촬영 종류</label>
-            <select id="shootType">
-                <option value="" disabled selected>촬영을 원하시는 항목을 선택해주세요</option>
-                <option value="증명/여권사진">증명/여권사진</option>
-                <option value="개인 프로필">개인 프로필</option>
-                <option value="가족/우정사진">가족/우정사진</option>
-            </select>
-        </div>
+
     <script>
         // 💡 새롭게 추가된 기능: 날짜를 선택하자마자 주말인지 검사하는 함수
         function checkWeekend(inputElement) {
