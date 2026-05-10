@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     }
 
     // 이름(name), 전화번호(phone) 대신 인게임 닉네임(inGameName), 디코 닉네임(discordName)으로 변경
-    const { date, inGameName, discordName, gameType, type } = req.body;
+    const { date, inGameName, discordName, gameType } = req.body;
     
     // 1. 접속 IP 획득 (Vercel 환경 기준)
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'IP 확인 불가';
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
     // 3. 디스코드 메시지 구성 (라벨 및 변수 변경)
     const message = {
-        content: `<@&${targetRoleId}> 님! 새로운 예약이 접수되었습니다. 🎉\n**게임 종류:** ${gameType}\n**인게임 닉네임:** ${inGameName}\n**디스코드 닉네임:** ${discordName}\n**촬영 종류:** ${type}\n**예약일:** ${date}\n🚨 **접속 IP:** ||${clientIp}||`
+        content: `<@&${targetRoleId}> 님! 새로운 예약이 접수되었습니다. 🎉\n**게임 종류:** ${gameType}\n**인게임 닉네임:** ${inGameName}\n**디스코드 닉네임:** ${discordName}\n**예약일:** ${date}\n🚨 **접속 IP:** ||${clientIp}||`
     };
 
     // 4. 디스코드로 데이터 전송
