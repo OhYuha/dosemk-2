@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>사진관 예약</title>
+    
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
     <style>
-        /* 전체 배경 및 폰트 설정 */
+        /* ... (기존 스타일 코드와 동일하게 유지) ... */
         body {
             font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
             background-color: #f7f5f2; 
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             color: #333;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* 예약 카드 디자인 */
         .reservation-card {
             background-color: #ffffff;
             width: 100%;
@@ -29,12 +32,13 @@
             text-align: center;
         }
 
-        /* 로고 디자인 */
         .logo {
-            width: 100%;
-            max-width: 80px; 
+            width: 150px; 
             height: auto;
             margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         h2 {
@@ -44,7 +48,6 @@
             font-weight: 600;
         }
 
-        /* 입력 폼 디자인 */
         .input-group {
             text-align: left;
             margin-bottom: 20px;
@@ -58,7 +61,7 @@
             margin-bottom: 8px;
         }
 
-        .input-group input {
+        .input-group input, .input-group select {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -67,13 +70,33 @@
             font-size: 15px;
             outline: none;
             transition: border-color 0.3s;
+            font-family: inherit;
         }
 
-        .input-group input:focus {
+        .input-group input:focus, .input-group select:focus {
             border-color: #333; 
         }
+        
+        .privacy-wrap {
+            margin: 20px 0; 
+            font-size: 13px; 
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
 
-        /* 버튼 디자인 */
+        .privacy-wrap label {
+            cursor: pointer; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 10px;
+            margin: 0;
+            color: #444;
+            line-height: 1.4;
+        }
+
         button {
             width: 100%;
             padding: 14px;
@@ -96,91 +119,111 @@
 <body>
 
     <div class="reservation-card">
-        <img src="logo.svg" alt="오오사진관 로고" class="logo">
-      
-        <h2>오오사진관</h2>
-        <div class="input-group">
-            <label for="sever">서버 종류</label>
-            <select id="sever">
-                <option value="" disabled selected>게임을 선택하세요</option>
-                <option value="도스온라인">도스온라인</option>
-                <option value="피버온라인">피버온라인</option>
-            </select>
-        </div>
-        <div class="input-group">
-            <label for="sever">촬영 종류</label>
-            <select id="sever">
-                <option value="" disabled selected>종류를 선택하세요</option>
-                <option value="선택 안함">선택안함</option>
-            </select>
-        </div>
+        <img src="logo.png" alt="사진관 로고" class="logo">
+        
+        <!-- 주말 예약하기 -> 사진관 예약 -->
+        <h2>사진관 예약</h2>
+        
         <div class="input-group">
             <label for="datePicker">예약 날짜 (주말만 가능)</label>
             <input type="date" id="datePicker" onchange="checkWeekend(this)">
         </div>
         
+        <!-- 예약자 성함 -> 인게임 닉네임 -->
         <div class="input-group">
-            <label for="customerName">예약자 인게임 닉네임</label>
-            <input type="text" id="customerName" placeholder="닉네임을 입력해주세요">
+            <label for="inGameName">인게임 닉네임</label>
+            <input type="text" id="inGameName" placeholder="인게임 닉네임을 입력해주세요">
+        </div>
+
+        <!-- 전화번호 -> 디스코드 닉네임 -->
+        <div class="input-group">
+            <label for="discordName">디스코드 닉네임</label>
+            <input type="text" id="discordName" placeholder="ex) 사용자#1234 또는 새 닉네임">
         </div>
 
         <div class="input-group">
-            <label for="DiscordName">예약자 디스코드 아이디</label>
-            <input type="text" id="DiscordName" placeholder="아이디를 입력해주세요">
+            <label for="gameType">게임 종류</label>
+            <select id="gameType">
+                <option value="" disabled selected>게임을 선택해주세요</option>
+                <option value="도스온라인">1. 도스온라인</option>
+                <option value="피버온라인">2. 피버온라인</option>
+            </select>
         </div>
-        <button onclick="submitReservation()">예약하기</button>
+
+        <div class="privacy-wrap">
+            <label>
+                <input type="checkbox" id="privacyConsent" style="margin-top: 2px;">
+                <span>[필수] 개인정보 수집 및 이용 동의<br>
+                <small style="color: #e74c3c;">(※ 노쇼 방지를 위해 접속 IP 주소가 수집됩니다. 수집된 IP는 촬영 후 파기됩니다.)</small></span>
+            </label>
+        </div>
+
+        <button onclick="submitReservation()">예약 신청하기</button>
     </div>
 
     <script>
-        // 💡 새롭게 추가된 기능: 날짜를 선택하자마자 주말인지 검사하는 함수
         function checkWeekend(inputElement) {
             const selectedValue = inputElement.value;
-            if (!selectedValue) return; // 아무것도 선택 안 했으면 무시
+            if (!selectedValue) return; 
 
             const selectedDate = new Date(selectedValue);
-            const dayOfWeek = selectedDate.getDay(); // 0: 일요일, 6: 토요일
+            const dayOfWeek = selectedDate.getDay(); 
 
-            // 평일(월~금)을 선택했다면?
             if (dayOfWeek !== 0 && dayOfWeek !== 6) {
                 alert("평일은 예약할 수 없습니다. 주말(토, 일)을 선택해주세요!");
-                inputElement.value = ''; // 👈 입력창을 강제로 비워버립니다 (선택 취소)
+                inputElement.value = ''; 
             }
         }
 
         function submitReservation() {
             const dateInput = document.getElementById('datePicker').value;
-            const nameInput = document.getElementById('customerName').value;
-            const DiscordInput = document.getElementById('DiscordName').value;
-            const severInput = document.getElementById('sever').value;
+            // ID 변경됨
+            const inGameNameInput = document.getElementById('inGameName').value;
+            const discordNameInput = document.getElementById('discordName').value;
+            const gameTypeInput = document.getElementById('gameType').value;
+            const typeInput = document.getElementById('shootType').value;
+            const isConsentChecked = document.getElementById('privacyConsent').checked;
 
-            // 빈칸 검사
-            if (!dateInput || !nameInput || !DiscordInput || !severInput) {
-                alert("날짜와 닉네임, 디코 아이디, 서버 종류를 모두 입력해주세요.");
+            if (!isConsentChecked) {
+                alert("개인정보 수집 및 이용에 동의해주셔야 예약이 가능합니다.");
                 return;
             }
 
-            // Vercel 서버로 데이터 전송
-            sendToServer(dateInput, nameInput, DiscordInput, severInput);
+            // 변수명 변경 반영
+            if (!dateInput || !inGameNameInput || !discordNameInput || !gameTypeInput || !typeInput) {
+                alert("모든 항목을 입력하고 선택해주세요.");
+                return;
+            }
+
+            // 전달하는 변수도 변경
+            sendToServer(dateInput, inGameNameInput, discordNameInput, gameTypeInput, typeInput);
         }
 
-        async function sendToServer(date, name, discord, sever) {
+        // 받는 변수명 변경 (inGameName, discordName)
+        async function sendToServer(date, inGameName, discordName, gameType, type) {
             try {
                 const response = await fetch('/api/reserve', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ date: date, name: name, discord:discord, sever:sever})
+                    headers: { 'Content-Type': 'application/json' },
+                    // 서버로 보내는 JSON 키값도 변경
+                    body: JSON.stringify({ date: date, inGameName: inGameName, discordName: discordName, gameType: gameType, type: type })
                 });
 
                 if (response.ok) {
-                    alert("예약이 성공적으로 완료되었습니다! 담당자가 빠르게 DM으로 안내드리겠습니다!");
+                    alert("예약이 성공적으로 완료되었습니다!");
+                    // 폼 초기화 (ID 변경됨)
+                    document.getElementById('datePicker').value = '';
+                    document.getElementById('inGameName').value = '';
+                    document.getElementById('discordName').value = '';
+                    document.getElementById('gameType').value = '';
+                    document.getElementById('shootType').value = '';
+                    document.getElementById('privacyConsent').checked = false;
                 } else {
-                    alert("예약 처리 중 오류가 발생했습니다.");
+                    const errorData = await response.json();
+                    alert("예약 실패: " + errorData.message);
                 }
             } catch (error) {
-                console.error("Error:", error);
-                alert("서버와 통신할 수 없습니다.");
+                alert("서버와 통신하는 중 문제가 발생했습니다.");
             }
         }
     </script>
